@@ -41,9 +41,9 @@ async def poll(ctx):
     await ctx.send(embed=embed)
     #NOTE: cache is cleared after every restart, so usee raw_on_reaction_add
 
-with open('token.json', 'r') as f:
+#with open('token.json', 'r') as f:
     #bot.run(json.load(f)['TOKEN'])
-    bot.run(os.getenv('TOKEN'))
+bot.run(os.getenv('TOKEN'))
     #token can be utilized to ban people, do malicious things, etc.
     #the python file controls what you do
 

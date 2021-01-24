@@ -1,0 +1,1 @@
+worker: eventbot.py
