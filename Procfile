@@ -1,1 +1,1 @@
-worker: eventbot.py
+worker: python3 eventbot.py
