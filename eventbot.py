@@ -139,7 +139,6 @@ class listener(commands.Cog):
                 column_index = 0
                 column = "monday"
             elif str(payload.emoji) == "2️⃣":
-                print('2')
                 column_index = 1
                 column = "tuesday"
             elif str(payload.emoji) == "3️⃣":
@@ -179,31 +178,31 @@ class listener(commands.Cog):
         fetch = self.cur.fetchone()
         if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             if str(payload.emoji) == "1️⃣":
-                column_index = 0
+                column_index = "FALSE"
                 column = "monday"
             elif str(payload.emoji) == "2️⃣":
-                print('2')
-                column_index = 1
+                column_index = "FALSE"
                 column = "tuesday"
             elif str(payload.emoji) == "3️⃣":
-                column_index = 2
+                column_index = "FALSE"
                 column = "wednesday"
             elif str(payload.emoji) == "4️⃣":
-                column_index = 3
+                column_index = "FALSE"
                 column = "thursday"
             elif str(payload.emoji) == "5️⃣":
-                column_index = 4
+                column_index = "FALSE"
                 column = "friday"
             elif str(payload.emoji) == "6️⃣":
-                column_index = 5
+                column_index = "FALSE"
                 column = "saturday"
             elif str(payload.emoji) == "7️⃣":
-                column_index = 6
+                column_index = "FALSE"
                 column = "sunday"
             elif str(payload.emoji) == "❌":
-                column_index = 7
+                column_index = "FALSE"
+                column = "unavailable"
             if column_index != -1:
-                SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
+                SQL = self.computesql(self.DATABASE_POLL_TABLE, "update_false", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
                 self.cur.execute(SQL)
                 self.conn.commit() #must commit to database
                 #await channel.send("executed delete SQL: " + SQL)
@@ -215,9 +214,13 @@ class listener(commands.Cog):
             if column_index != 7:
                 dup[column_index] = "TRUE"
                 #you need to add channel_id in here later for multi-channel use
-                SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup)
-            elif column_index == 7:
-                SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET monday = FALSE AND tuesday = FALSE AND wednesday = FALSE AND thursday = FALSE AND friday = FALSE AND saturday = FALSE AND sunday = FALSE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, args=dup)
+                unavailable = "FALSE"
+                SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, unavailable) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}, {unavailable}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup, unavailable=unavailable)
+            elif column index == 7:
+                unavailable = "TRUE"
+                SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, unavailable) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}, {unavailable}) ON CONFLICT (user_id) DO UPDATE SET unavailable = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup, unavailable=unavailable)
+        elif action == "update_false":
+            SQL = "UPDATE {table} SET {column} = {column_index} WHERE user_id = {user_id} AND channel_id = {channel_id};".format(table=table, column=column, column_index=column_index, channel_id=channel_id)
         elif action == "delete":
             SQL = "DELETE FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "check_user":
