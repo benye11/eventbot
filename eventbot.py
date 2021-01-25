@@ -1,9 +1,16 @@
 import discord
 from discord import Attachment
 from discord import Embed
+from discord.ext.commands import Cog
 from discord.ext import commands
 from datetime import datetime
 import os
+import psycopg2
+
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+
+table = os.environ['DATABASE_POLL_TABLE']
 
 bot = commands.Bot(command_prefix='.')
 bot.remove_command('help')
@@ -32,15 +39,73 @@ async def commands(ctx):
 
 @bot.command()
 async def poll(ctx):
-    embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
-    embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
-    embed.set_thumbnail(url='https://image.flaticon.com/icons/png/512/1458/1458512.png')
-  #embed.add_field(name="React to this if available anytime between 6-10PM", value="If you are available at least 30 mins between 6-10PM, please react", inline=False)
-    embed.add_field(name="React with number emojis", value="1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣, 6️⃣, 7️⃣ corresponds to Monday, Tuesday, etc.")
-    embed.set_footer(text=datetime.now().strftime('%-m/%-d/%Y %-I:%-M %p'))
-    await ctx.send(embed=embed)
-    #NOTE: cache is cleared after every restart, so usee raw_on_reaction_add
+    #check if poll exists. we should have only one
+    if os.environ.get('POLLOBJECTID') is not None:
+        await ctx.send("poll already exists! please edit that one and don't delete it")
+    else:
+        embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
+        embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
+        embed.set_thumbnail(url='https://image.flaticon.com/icons/png/512/1458/1458512.png')
+        #embed.add_field(name="React to this if available anytime between 6-10PM", value="If you are available at least 30 mins between 6-10PM, please react", inline=False)
+        embed.add_field(name="React with number emojis", value="1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣, 6️⃣, 7️⃣ corresponds to Monday, Tuesday, etc. and ❌ if not available for anything")
+        current_time = datetime.now().strftime('%-m/%-d/%Y %-I:%-M %p')
+        embed.set_footer(text=current_time)
+        message = await ctx.send(embed=embed)
+        os.environ['POLLOBJECTID'] = str(message.id)
+        os.environ['POLLCHANNELID'] = str(message.channel.id)
+        embed.add_field(name= "Message ID", value=str(message.id))
+        await message.edit(embed=embed) #add message ID for reference
+        await message.pin() #pins message
+        #NOTE: cache is cleared after every restart, so use raw_on_reaction_add
 
+@Cog.listener()
+async def on_raw_reaction_add(payload):
+    #sql implementation
+    args = ["FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"]
+    column_index = -1
+    column = ""
+    if str(payload.message_id) == os.environ['POLLOBJECTID'] and str(payload.channel_id) == os.environ['POLLCHANNELID']: #message_id but may also need channel_id
+        if payload.emoji == 1️⃣:
+            column_index = 0
+            column = "monday"
+        elif payload.emoji == 2️⃣:
+            column_index = 1
+            column = "tuesday"
+        elif payload.emoji == 3️⃣:
+            column_index = 2
+            column = "wednesday"
+        elif payload.emoji == 4️⃣:
+            column_index = 3
+            column = "thursday"
+        elif payload.emoji == 5️⃣:
+            column_index = 4
+            column = "friday"
+        elif payload.emoji == 6️⃣:
+            column_index = 5
+            column = "saturday"
+        elif payload.emoji == 7️⃣:
+            column_index = 6
+            column = "sunday"
+        elif payload.emoji == ❌:
+            column_index = 7
+        if column_index != -1:
+            if column_index == 7: #delete
+                curs.execute(computesql(table, "delete", payload.user_id, bot.fetch_user(payload.user_id).name, "", "", ""))
+            else:
+                curs.execute(computesql(table, "update", payload.user_id, bot.fetch_user(payload.user_id).name, column, column_index, args))
+
+def computesql(table, action, user_id, username, column, column_index, args):
+    SQL = ''
+    args[column_index] = "TRUE"
+    if action == "update":
+        SQL = "INSERT INTO {table} (user_id, username, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]} \
+            ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, column=column, args=args)
+        #SQL = "UPDATE {table} SET {column} = TRUE WHERE user_id = {user_id}".format(table=table, user_id=user_id, column=column)
+    elif action == "delete":
+        SQL = "DELETE FROM {table} WHERE user_id = {user.id};".format(table=table, user_id=user_id)
+    elif action == "check": #
+        SQL = "SELECT CASE WHEN monday | tuesday | wednesday | thursday | friday | saturday | sunday = 0 THEN FALSE ELSE TRUE END deletable FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
+    return SQL
 #with open('token.json', 'r') as f:
     #bot.run(json.load(f)['TOKEN'])
 bot.run(os.getenv('TOKEN'))
