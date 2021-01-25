@@ -89,6 +89,7 @@ class listener(commands.Cog):
 
     @commands.command()
     async def availability(self, ctx, arg):
+        print(arg[0])
         if '/' in arg[0]:
             #query sql
             day = datetime.strptime(arg[0], "%m/%d").strftime("%A").lower()
@@ -159,12 +160,12 @@ class listener(commands.Cog):
                     SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
                     self.cur.execute(SQL)
                     self.conn.commit() #must commit to database
-                    await channel.send("executed delete SQL: " + SQL)
+                    #await channel.send("executed delete SQL: " + SQL)
                 else:
                     SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
                     self.cur.execute(SQL)
                     self.conn.commit() #must commit to database
-                    await channel.send("executed update/insert SQL: " + SQL)
+                    #await channel.send("executed update/insert SQL: " + SQL)
 
     def computesql(self, table, action, user_id, username, column, column_index, args):
         SQL = ''
