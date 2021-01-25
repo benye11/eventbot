@@ -101,7 +101,7 @@ class listener(commands.Cog):
             for i in range(len(users)):
                 user = await self.bot.fetch_user(users[i])
                 mentions.append(user.mention)
-            output = ', '.join(output)
+            output = ', '.join(mentions)
             await ctx.send(output + " are available on " + arg[0] + "(" + day + ")")
             #now we have many tuples
             pass
