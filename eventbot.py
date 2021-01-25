@@ -59,6 +59,7 @@ class listener(commands.Cog):
             message = await ctx.send(embed=embed)
             SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, self.args)
             self.cur.execute(SQL)
+            self.conn.commit() #commit changes to database
             embed.add_field(name= "Message ID", value=str(message.id), inline=False)
             await message.edit(embed=embed) #add message ID for reference
             await message.pin() #pins message
@@ -157,10 +158,12 @@ class listener(commands.Cog):
                 if column_index == 7:
                     SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", user.name, 0, 0, self.args)
                     self.cur.execute(SQL)
+                    self.conn.commit() #must commit to database
                     await channel.send("executed delete SQL: " + SQL)
                 else:
                     SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", user.name, column, column_index, self.args)
                     self.cur.execute(SQL)
+                    self.conn.commit() #must commit to database
                     await channel.send("executed update/insert SQL: " + SQL)
 
     def computesql(self, table, action, user_id, username, column, column_index, args):
