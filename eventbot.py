@@ -65,28 +65,28 @@ async def on_raw_reaction_add(payload):
     column_index = -1
     column = ""
     if str(payload.message_id) == os.environ['POLLOBJECTID'] and str(payload.channel_id) == os.environ['POLLCHANNELID']: #message_id but may also need channel_id
-        if payload.emoji == 1️⃣:
+        if payload.emoji == "1️⃣":
             column_index = 0
             column = "monday"
-        elif payload.emoji == 2️⃣:
+        elif payload.emoji == "2️⃣":
             column_index = 1
             column = "tuesday"
-        elif payload.emoji == 3️⃣:
+        elif payload.emoji == "3️⃣":
             column_index = 2
             column = "wednesday"
-        elif payload.emoji == 4️⃣:
+        elif payload.emoji == "4️⃣":
             column_index = 3
             column = "thursday"
-        elif payload.emoji == 5️⃣:
+        elif payload.emoji == "5️⃣":
             column_index = 4
             column = "friday"
-        elif payload.emoji == 6️⃣:
+        elif payload.emoji == "6️⃣":
             column_index = 5
             column = "saturday"
-        elif payload.emoji == 7️⃣:
+        elif payload.emoji == "7️⃣":
             column_index = 6
             column = "sunday"
-        elif payload.emoji == ❌:
+        elif payload.emoji == "❌":
             column_index = 7
         if column_index != -1:
             if column_index == 7: #delete
