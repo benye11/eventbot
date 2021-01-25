@@ -36,6 +36,7 @@ async def commands(ctx):
     #.add_field(name=".availability time_start time_end", value="output people available for this time\nformat: MM-DD HH:MM AM/PM to MM-DD HH:MM AM/PM\nexample: 01-23 04:30 PM to 01-23 05:00 PM\nyear format: YYYY-MM-DD HH:MM AM/PM to YYYY-MM-DD Hour:MM AM/PM to schedule specific year", inline=False) \
     #embed = Embed().setColor('#0099ff').setTitle('Some title').setURL('https://discord.js.org/').setAuthor('Some name', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org').setDescription('Some description here').setThumbnail('https://i.imgur.com/wSTFkRM.png')
     await ctx.send(embed=embed)
+    await ctx.send("helllloo")
 
 @bot.command()
 async def poll(ctx):
