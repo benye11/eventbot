@@ -90,10 +90,15 @@ async def on_raw_reaction_add(payload):
             column_index = 7
         if column_index != -1:
             if column_index == 7: #delete
-                curs.execute(computesql(table, "delete", payload.user_id, bot.fetch_user(payload.user_id).name, "", "", ""))
+                SQL = computesql(table, "delete", payload.user_id, bot.fetch_user(payload.user_id).name, "", "", "")
+                curs.execute(SQL)
+                print('deleted')
+                await bot.fetch_channel(payload.channel_id).send("executed SQL: " + SQL)
             else:
-                curs.execute(computesql(table, "update", payload.user_id, bot.fetch_user(payload.user_id).name, column, column_index, args))
+                SQL = computesql(table, "update", payload.user_id, bot.fetch_user(payload.user_id).name, column, column_index, args)
+                curs.execute(SQL)
                 print('executed')
+                await bot.fetch_channel(payload.channel_id).send("executed SQL: " + SQL)
 
 def computesql(table, action, user_id, username, column, column_index, args):
     SQL = ''
