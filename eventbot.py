@@ -26,12 +26,15 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
 """
+
+#bot.load_extension('cogs.listener')
+
 @bot.event
 async def on_ready():
     print('Logged in as {0.user}'.format(self.bot))
 
 @bot.command()
-async def notify(self, ctx, *args):
+async def notify(ctx, *args):
     if len(args) == 0:
         await ctx.send("[Usage]: .notify <event_name>\n[Error message]: please provide event name")
     else:
