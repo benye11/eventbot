@@ -220,7 +220,7 @@ class listener(commands.Cog):
                 unavailable = "TRUE"
                 SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, unavailable) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}, {unavailable}) ON CONFLICT (user_id) DO UPDATE SET unavailable = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup, unavailable=unavailable)
         elif action == "update_false":
-            SQL = "UPDATE {table} SET {column} = {column_index} WHERE user_id = {user_id} AND channel_id = {channel_id};".format(table=table, column=column, column_index=column_index, channel_id=channel_id)
+            SQL = "UPDATE {table} SET {column} = {column_index} WHERE user_id = {user_id} AND channel_id = {channel_id};".format(table=table, user_id=user_id, column=column, column_index=column_index, channel_id=channel_id)
         elif action == "delete":
             SQL = "DELETE FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "check_user":
