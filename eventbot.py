@@ -55,7 +55,7 @@ class listener(commands.Cog):
             current_time = datetime.now().strftime('%m/%d/%Y %I:%M %p')
             embed.set_footer(text=current_time)
             message = await ctx.send(embed=embed)
-            SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, args)
+            SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, self.args)
             self.cur.execute(SQL)
             embed.add_field(name= "Message ID", value=str(message.id), inline=False)
             await message.edit(embed=embed) #add message ID for reference
@@ -90,7 +90,7 @@ class listener(commands.Cog):
             #query sql
             day = datetime.strptime(arg[0], "%m/%d").strftime("%A").lower()
             #computesql(self, table, action, user_id, username, column, column_index, args):
-            SQL = self.computesql(self.DATABASE_POLL_TABLE, "fetch_users", "", "", day, 0, args)
+            SQL = self.computesql(self.DATABASE_POLL_TABLE, "fetch_users", "", "", day, 0, self.args)
             self.cur.execute(SQL)
             fetch = self.cur.fetchall()
             users = [x[0] for x in fetch]
@@ -123,7 +123,7 @@ class listener(commands.Cog):
         #sql implementation
         column_index = -1
         column = ""
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, args)
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, self.args)
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
@@ -153,11 +153,11 @@ class listener(commands.Cog):
                 column_index = 7
             if column_index != -1:
                 if column_index == 7:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", user.name, 0, 0, args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", user.name, 0, 0, self.args)
                     self.cur.execute(SQL)
                     await channel.send("executed delete SQL: " + SQL)
                 else:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", user.name, column, column_index, args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", user.name, column, column_index, self.args)
                     self.cur.execute(SQL)
                     await channel.send("executed update/insert SQL: " + SQL)
 
