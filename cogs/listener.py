@@ -79,7 +79,7 @@ class listener(commands.Cog):
                 difference = parsed_time - datetime.now()
                 await asyncio.sleep(difference.total_seconds())
                 await ctx.send("[Scheduler] Notifying " + "@everyone" + " that \"" + event_input + "\" is happening now!")
-            except Exception as e:)
+            except Exception as e:
                 await ctx.send("[Usage]: .schedule <event_name> <event_day>\n[Error message]: invalid <event_day>\n[Format]: Month/Day Hour:Minute AM/PM\n[Example]: 01/23 4:30 PM\ndebug message: " + str(e))
 
     @commands.command()
