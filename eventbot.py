@@ -14,6 +14,8 @@ bot = commands.Bot(command_prefix='.')
 bot.remove_command('help')
 
 env_variables = (os.environ['DATABASE_URL'], os.environ['DATABASE_POLL_TABLE'], os.environ['DATABASE_POLL_MESSAGE_ID_TABLE'])
+for i in env_variables:
+    print('env: ', i)
 
 class listener(commands.Cog):
     def __init__(self, bot, env_variables):
@@ -164,7 +166,7 @@ class listener(commands.Cog):
     def computesql(self, table, action, user_id, username, column, column_index, args):
         SQL = ''
         if action == "update":
-            dup = args.clone()
+            dup = args.copy()
             dup[column_index] = "TRUE"
             SQL = "INSERT INTO {table} (user_id, username, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, column=column, args=dup)
         elif action == "delete":
