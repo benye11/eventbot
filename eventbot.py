@@ -25,10 +25,6 @@ class listener(commands.Cog):
         self.cur = self.conn.cursor()
         self.args = ["FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"]
 
-    @commands.event
-    async def on_ready():
-        print('Logged in as {0.user}'.format(self.bot))
-
     @commands.command(aliases=['eventbot'])
     async def help(self, ctx):
         embed = discord.Embed(color=0x32A852, title='Commands', description='This is a list of all the commands and how to use them')
