@@ -89,10 +89,9 @@ class listener(commands.Cog):
 
     @commands.command()
     async def availability(self, ctx, arg):
-        print(arg[0])
-        if '/' in arg[0]:
+        if '/' in arg:
             #query sql
-            day = datetime.strptime(arg[0], "%m/%d").strftime("%A").lower()
+            day = datetime.strptime(arg, "%m/%d").strftime("%A").lower()
             #computesql(self, table, action, user_id, username, column, column_index, args):
             SQL = self.computesql(self.DATABASE_POLL_TABLE, "fetch_users", "", "", day, 0, self.args)
             self.cur.execute(SQL)
@@ -106,7 +105,7 @@ class listener(commands.Cog):
             await ctx.send(output + " are available on " + arg[0] + "(" + day + ")")
             #now we have many tuples
             pass
-        elif arg[0].isnumeric():
+        elif arg.isnumeric():
             #query sql
             await ctx.send("id parsing not implemented")
             pass
