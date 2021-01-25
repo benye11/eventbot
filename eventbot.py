@@ -91,7 +91,7 @@ class listener(commands.Cog):
     async def availability(self, ctx, arg):
         if '/' in arg:
             #query sql
-            day = datetime.strptime(arg, "%m/%d").strftime("%A").lower()
+            day = datetime.strptime(arg + " " + str(datetime.now().year), "%m/%d %Y").strftime("%A").lower()
             #computesql(self, table, action, user_id, username, column, column_index, args):
             SQL = self.computesql(self.DATABASE_POLL_TABLE, "fetch_users", "", "", day, 0, self.args)
             self.cur.execute(SQL)
@@ -101,8 +101,13 @@ class listener(commands.Cog):
             for i in range(len(users)):
                 user = await self.bot.fetch_user(users[i])
                 mentions.append(user.mention)
-            output = ', '.join(mentions)
-            await ctx.send(output + " are available on " + arg[0] + "(" + day + ")")
+            if len(mentions) == 0:
+                await ctx.send("no one is available on " + arg + " (" + day + ")")
+            elif len(mentions) == 1:
+                await ctx.send(mentions[0] + " is available on " + arg + " (" + day + ")")
+            else:
+                output = ', '.join(mentions)
+                await ctx.send(output + " are available on " + arg + " (" + day + ")")
             #now we have many tuples
             pass
         elif arg.isnumeric():
