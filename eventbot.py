@@ -11,9 +11,6 @@ bot = commands.Bot(command_prefix='.')
 bot.remove_command('help')
 
 def load_extension(name, bot, sharedobj):
-    if name in self.extensions:
-        print('name in self.extensions')
-        return
     lib = importlib.import_module(name)
     lib.setup(bot, sharedobj)
     bot.extensions[name] = lib
