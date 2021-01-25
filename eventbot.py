@@ -160,24 +160,64 @@ class listener(commands.Cog):
             elif str(payload.emoji) == "❌":
                 column_index = 7
             if column_index != -1:
-                if column_index == 7:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
-                    self.cur.execute(SQL)
-                    self.conn.commit() #must commit to database
-                    #await channel.send("executed delete SQL: " + SQL)
-                else:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
-                    self.cur.execute(SQL)
-                    self.conn.commit() #must commit to database
-                    #await channel.send("executed update/insert SQL: " + SQL)
+                SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
+                self.cur.execute(SQL)
+                self.conn.commit() #must commit to database
+                #await channel.send("executed update/insert SQL: " + SQL)
+
+    #NOTE: cache is cleared after every restart, so use raw_on_reaction_add
+    @commands.Cog.listener()
+    async def on_raw_reaction_remove(self, payload):
+        user = await self.bot.fetch_user(payload.user_id)
+        channel = await self.bot.fetch_channel(payload.channel_id)
+        
+        #sql implementation
+        column_index = -1
+        column = ""
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, self.args)
+        self.cur.execute(SQL)
+        fetch = self.cur.fetchone()
+        if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
+            if str(payload.emoji) == "1️⃣":
+                column_index = 0
+                column = "monday"
+            elif str(payload.emoji) == "2️⃣":
+                print('2')
+                column_index = 1
+                column = "tuesday"
+            elif str(payload.emoji) == "3️⃣":
+                column_index = 2
+                column = "wednesday"
+            elif str(payload.emoji) == "4️⃣":
+                column_index = 3
+                column = "thursday"
+            elif str(payload.emoji) == "5️⃣":
+                column_index = 4
+                column = "friday"
+            elif str(payload.emoji) == "6️⃣":
+                column_index = 5
+                column = "saturday"
+            elif str(payload.emoji) == "7️⃣":
+                column_index = 6
+                column = "sunday"
+            elif str(payload.emoji) == "❌":
+                column_index = 7
+            if column_index != -1:
+                SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
+                self.cur.execute(SQL)
+                self.conn.commit() #must commit to database
+                #await channel.send("executed delete SQL: " + SQL)
 
     def computesql(self, table, action, channel_id, user_id, username, column, column_index, args):
         SQL = ''
         if action == "update":
             dup = args.copy()
-            dup[column_index] = "TRUE"
-            #you need to add channel_id in here later for multi-channel use
-            SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup)
+            if column_index != 7:
+                dup[column_index] = "TRUE"
+                #you need to add channel_id in here later for multi-channel use
+                SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup)
+            elif column_index == 7:
+                SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET monday = FALSE AND tuesday = FALSE AND wednesday = FALSE AND thursday = FALSE AND friday = FALSE AND saturday = FALSE AND sunday = FALSE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, args=dup)
         elif action == "delete":
             SQL = "DELETE FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "check_user":
