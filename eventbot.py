@@ -21,9 +21,21 @@ env_variables = (os.environ['DATABASE_URL'], os.environ['DATABASE_POLL_TABLE'], 
 
 #load_extension('listener', bot, env_variables)
 
+"""
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.{filename[:-3]}')
+"""
+@bot.event
+async def on_ready():
+    print('Logged in as {0.user}'.format(self.bot))
+
+@bot.command()
+async def notify(self, ctx, *args):
+    if len(args) == 0:
+        await ctx.send("[Usage]: .notify <event_name>\n[Error message]: please provide event name")
+    else:
+        await ctx.send("Notifying " + "@everyone" + " that \"" + ' '.join(args) + "\" is happening now!")
 
 def getenv_variables():
     return env_variables

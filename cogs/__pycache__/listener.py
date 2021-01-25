@@ -20,7 +20,7 @@ class listener(commands.Cog):
         self.cur = self.conn.cursor()
         self.args = ["FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"]
 
-    @commands.command
+    @commands.event
     async def on_ready():
         print('Logged in as {0.user}'.format(self.bot))
 
