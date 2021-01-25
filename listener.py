@@ -3,6 +3,7 @@ from discord import Attachment
 from discord import Embed
 from discord.ext import commands
 from datetime import datetime
+from eventbot import getenv_variables
 import psycopg2
 import os
 import time
@@ -177,5 +178,6 @@ class listener(commands.Cog):
             SQL = "INSERT INTO {table} (poll_message_id, channel_id) VALUES ({user_id}, {username});".format(user_id=user_id, username=username)
         return SQL
 
-def setup(bot, env_variables):
+def setup(bot):
+    env_variables = getenv_variables()
     bot.add_cog(listener(bot, env_variables))
