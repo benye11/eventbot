@@ -15,7 +15,7 @@ class listener(commands.Cog):
         self.DATABASE_URL = env_variables[0]
         self.DATABASE_POLL_TABLE = env_variables[1]
         self.DATABASE_POLL_MESSAGE_ID_TABLE = env_variables[2]
-        self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        self.conn = psycopg2.connect(self.DATABASE_URL, sslmode='require')
         self.cur = self.conn.cursor()
         self.args = ["FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"]
 
