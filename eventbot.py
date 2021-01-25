@@ -53,7 +53,7 @@ async def poll(ctx):
         message = await ctx.send(embed=embed)
         os.environ['POLLOBJECTID'] = str(message.id)
         os.environ['POLLCHANNELID'] = str(message.channel.id)
-        embed.add_field(name= "Message ID", value=str(message.id))
+        embed.add_field(name= "Message ID", value=str(message.id), inline=False)
         await message.edit(embed=embed) #add message ID for reference
         await message.pin() #pins message
         #NOTE: cache is cleared after every restart, so use raw_on_reaction_add
@@ -93,6 +93,7 @@ async def on_raw_reaction_add(payload):
                 curs.execute(computesql(table, "delete", payload.user_id, bot.fetch_user(payload.user_id).name, "", "", ""))
             else:
                 curs.execute(computesql(table, "update", payload.user_id, bot.fetch_user(payload.user_id).name, column, column_index, args))
+                print('executed')
 
 def computesql(table, action, user_id, username, column, column_index, args):
     SQL = ''
@@ -103,8 +104,12 @@ def computesql(table, action, user_id, username, column, column_index, args):
         #SQL = "UPDATE {table} SET {column} = TRUE WHERE user_id = {user_id}".format(table=table, user_id=user_id, column=column)
     elif action == "delete":
         SQL = "DELETE FROM {table} WHERE user_id = {user.id};".format(table=table, user_id=user_id)
-    elif action == "check": #
+    elif action == "check_user": #
         SQL = "SELECT CASE WHEN monday | tuesday | wednesday | thursday | friday | saturday | sunday = 0 THEN FALSE ELSE TRUE END deletable FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
+    elif action == "check_poll":
+        SQL = "SELECT FROM {table}"
+    elif action == "delete_poll":
+        SQL = ""
     return SQL
 #with open('token.json', 'r') as f:
     #bot.run(json.load(f)['TOKEN'])
