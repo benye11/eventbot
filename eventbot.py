@@ -44,7 +44,7 @@ class listener(commands.Cog):
         #check if a poll exists. we should have only one
         SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", "'" + str(ctx.channel.id) + "'", "", "", "")
         self.cur.execute(SQL)
-        fetch = cur.fetchone()
+        fetch = self.cur.fetchone()
         if fetch is not None:
             await ctx.send("poll already exists! please edit that one and don't delete it")
         else:
