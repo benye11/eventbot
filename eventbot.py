@@ -42,7 +42,7 @@ class listener(commands.Cog):
     @commands.command()
     async def poll(self, ctx):
         #check if a poll exists. we should have only one
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", ctx.channel_id, "", "", "")
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", str(ctx.id), "", "", "")
         self.cur.execute(SQL)
         fetch = cur.fetchone()
         if fetch is not None:
@@ -108,6 +108,11 @@ class listener(commands.Cog):
             pass
         else:
             await ctx.send("[Usage]: .availability <event_id or event_day> [Error message]: invalid date or ID")
+
+    @commands.command()
+    async def repo(self, ctx):
+        embed= discord.Embed(title="Repo Link", url="https://github.com/benye11/eventbot", description="Developed in Python", color=0x000000)
+        await ctx.send(embed=embed)
         
     #NOTE: cache is cleared after every restart, so use raw_on_reaction_add
     @commands.Cog.listener()
@@ -118,7 +123,7 @@ class listener(commands.Cog):
         #sql implementation
         column_index = -1
         column = ""
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", payload.message_id, payload.channel_id, 0, 0, args)
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", str(payload.message_id), str(payload.channel_id), 0, 0, args)
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
@@ -148,11 +153,11 @@ class listener(commands.Cog):
                 column_index = 7
             if column_index != -1:
                 if column_index == 7:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", payload.user_id, user.name, 0, 0, args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", str(payload.user_id), user.name, 0, 0, args)
                     self.cur.execute(SQL)
                     await channel.send("executed delete SQL: " + SQL)
                 else:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", payload.user_id, user.name, column, column_index, args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", str(payload.user_id), user.name, column, column_index, args)
                     self.cur.execute(SQL)
                     await channel.send("executed update/insert SQL: " + SQL)
 
