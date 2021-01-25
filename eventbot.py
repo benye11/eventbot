@@ -216,7 +216,7 @@ class listener(commands.Cog):
                 #you need to add channel_id in here later for multi-channel use
                 unavailable = "FALSE"
                 SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, unavailable) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}, {unavailable}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup, unavailable=unavailable)
-            elif column index == 7:
+            elif column_index == 7:
                 unavailable = "TRUE"
                 SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, unavailable) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}, {unavailable}) ON CONFLICT (user_id) DO UPDATE SET unavailable = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup, unavailable=unavailable)
         elif action == "update_false":
