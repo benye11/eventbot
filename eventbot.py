@@ -40,11 +40,11 @@ class listener(commands.Cog):
         embed.add_field(name=".repo", value="output link to github repo. helpful links and resources are displayed in the README.md")
         embed.set_footer(text=datetime.now().strftime('%m/%d/%Y %I:%M %p'))
         await ctx.send(embed=embed)
-    
-    @commands.command()
+
+    @commands.command() 
     async def poll(self, ctx):
         #check if a poll exists. we should have only one
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", "'" + str(ctx.channel.id) + "'", "", "", "")
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", "", "'" + str(ctx.channel.id) + "'", "", "", self.args)
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if fetch is not None and fetch[1] == str(ctx.channel.id):
