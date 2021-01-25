@@ -57,7 +57,7 @@ class listener(commands.Cog):
             current_time = datetime.now().strftime('%m/%d/%Y %I:%M %p')
             embed.set_footer(text=current_time)
             message = await ctx.send(embed=embed)
-            SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, self.args)
+            SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, self.args)
             self.cur.execute(SQL)
             self.conn.commit() #commit changes to database
             embed.add_field(name= "Message ID", value=str(message.id), inline=False)
@@ -93,7 +93,7 @@ class listener(commands.Cog):
             #query sql
             day = datetime.strptime(arg + " " + str(datetime.now().year), "%m/%d %Y").strftime("%A").lower()
             #computesql(self, table, action, user_id, username, column, column_index, args):
-            SQL = self.computesql(self.DATABASE_POLL_TABLE, "fetch_users", "", "", day, 0, self.args)
+            SQL = self.computesql(self.DATABASE_POLL_TABLE, "fetch_users", "'" + str(ctx.channel.id) + "'", "", "", day, 0, self.args)
             self.cur.execute(SQL)
             fetch = self.cur.fetchall()
             users = [x[0] for x in fetch]
@@ -131,7 +131,7 @@ class listener(commands.Cog):
         #sql implementation
         column_index = -1
         column = ""
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, self.args)
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, self.args)
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
@@ -161,28 +161,29 @@ class listener(commands.Cog):
                 column_index = 7
             if column_index != -1:
                 if column_index == 7:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
                     self.cur.execute(SQL)
                     self.conn.commit() #must commit to database
                     #await channel.send("executed delete SQL: " + SQL)
                 else:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
                     self.cur.execute(SQL)
                     self.conn.commit() #must commit to database
                     #await channel.send("executed update/insert SQL: " + SQL)
 
-    def computesql(self, table, action, user_id, username, column, column_index, args):
+    def computesql(self, table, action, channel_id, user_id, username, column, column_index, args):
         SQL = ''
         if action == "update":
             dup = args.copy()
             dup[column_index] = "TRUE"
-            SQL = "INSERT INTO {table} (user_id, username, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, column=column, args=dup)
+            #you need to add channel_id in here later for multi-channel use
+            SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}) ON CONFLICT (user_id) DO UPDATE SET {column} = TRUE;".format(table=table, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup)
         elif action == "delete":
             SQL = "DELETE FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "check_user":
             SQL = "SELECT CASE WHEN monday | tuesday | wednesday | thursday | friday | saturday | sunday = 0 THEN FALSE ELSE TRUE END as \"deletable\" FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "fetch_users":
-            SQL = "SELECT user_id, username FROM {table} WHERE {column} = TRUE;".format(table=table, column=column)
+            SQL = "SELECT user_id, username FROM {table} WHERE {column} = TRUE AND channel_id={channel_id};".format(table=table, channel_id=channel_id, column=column)
         elif action == "delete_poll_message":
             SQL = "DELETE FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "check_poll_message":
