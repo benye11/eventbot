@@ -60,6 +60,7 @@ async def poll(ctx):
 
 @Cog.listener()
 async def on_raw_reaction_add(payload):
+    await bot.fetch_channel(payload.channel_id).send("reacted")
     #sql implementation
     args = ["FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"]
     column_index = -1
