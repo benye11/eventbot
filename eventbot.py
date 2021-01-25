@@ -55,7 +55,7 @@ class listener(commands.Cog):
             current_time = datetime.now().strftime('%m/%d/%Y %I:%M %p')
             embed.set_footer(text=current_time)
             message = await ctx.send(embed=embed)
-            SQL = self.compute(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, args)
+            SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "set_poll_message", "'" + str(message.id) + "'", "'" + str(message.channel.id) + "'", 0, 0, args)
             self.cur.execute(SQL)
             embed.add_field(name= "Message ID", value=str(message.id), inline=False)
             await message.edit(embed=embed) #add message ID for reference
