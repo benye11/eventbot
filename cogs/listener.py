@@ -39,8 +39,8 @@ class listener(commands.Cog):
     
     @commands.command()
     async def poll(self, ctx):
-        #check if poll exists. we should have only one
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "", payload.message_id, "", "", "")
+        #check if a poll exists. we should have only one
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", payload.channel_id, "", "", "")
         self.cur.execute(SQL)
         fetch = cur.fetchone()
         if fetch is not None:
@@ -117,11 +117,10 @@ class listener(commands.Cog):
         #sql implementation
         column_index = -1
         column = ""
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "", payload.message_id, 0, 0, args)
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", payload.message_id, payload.channel_id, 0, 0, args)
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
-        if fetch is not None:
-            print('here')
+        if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             if str(payload.emoji) == "1️⃣":
                 column_index = 0
                 column = "monday"
@@ -170,8 +169,10 @@ class listener(commands.Cog):
             SQL = "SELECT user_id, username FROM {table} WHERE {column} = {value};"
         elif action == "delete_poll_message":
             SQL = "DELETE FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
-        elif action == "fetch_poll_message":
+        elif action == "check_poll_message":
             SQL = "SELECT poll_message_id FROM {table} WHERE channel_id = {username};".format(table=table, username=username)
+        elif action == "fetch_poll_message":
+            SQL = "SELECT poll_message_id, channel_id FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "set_poll_message":
             SQL = "INSERT INTO {table} (poll_message_id, channel_id) VALUES ({user_id}, {username});".format(user_id=user_id, username=username)
         return SQL
