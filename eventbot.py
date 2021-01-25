@@ -47,7 +47,7 @@ class listener(commands.Cog):
         SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", "'" + str(ctx.channel.id) + "'", "", "", "")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
-        if fetch is not None:
+        if fetch is not None and fetch[1] == str(ctx.channel.id):
             await ctx.send("poll already exists! please edit that one and don't delete it")
         else:
             embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
@@ -186,7 +186,7 @@ class listener(commands.Cog):
         elif action == "delete_poll_message":
             SQL = "DELETE FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "check_poll_message":
-            SQL = "SELECT poll_message_id FROM {table} WHERE channel_id = {username};".format(table=table, username=username)
+            SQL = "SELECT poll_message_id, channel_id FROM {table} WHERE channel_id = {username};".format(table=table, username=username)
         elif action == "fetch_poll_message":
             SQL = "SELECT poll_message_id, channel_id FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "set_poll_message":
