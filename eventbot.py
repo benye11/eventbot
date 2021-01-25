@@ -31,7 +31,7 @@ for filename in os.listdir('./cogs'):
 
 @bot.event
 async def on_ready():
-    print('Logged in as {0.user}'.format(self.bot))
+    print('Logged in as {0.user}'.format(bot))
 
 @bot.command()
 async def notify(ctx, *args):
