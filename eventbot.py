@@ -172,7 +172,7 @@ class listener(commands.Cog):
         elif action == "check_user":
             SQL = "SELECT CASE WHEN monday | tuesday | wednesday | thursday | friday | saturday | sunday = 0 THEN FALSE ELSE TRUE END as \"deletable\" FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "fetch_users":
-            SQL = "SELECT user_id, username FROM {table} WHERE {column} = {value};"
+            SQL = "SELECT user_id, username FROM {table} WHERE {column} = TRUE;".format(table=table, column=column)
         elif action == "delete_poll_message":
             SQL = "DELETE FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "check_poll_message":
@@ -180,7 +180,7 @@ class listener(commands.Cog):
         elif action == "fetch_poll_message":
             SQL = "SELECT poll_message_id, channel_id FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "set_poll_message":
-            SQL = "INSERT INTO {table} (poll_message_id, channel_id) VALUES ({user_id}, {username});".format(user_id=user_id, username=username)
+            SQL = "INSERT INTO {table} (poll_message_id, channel_id) VALUES ({user_id}, {username});".format(table=table, user_id=user_id, username=username)
         return SQL
 
 class BotClass():
