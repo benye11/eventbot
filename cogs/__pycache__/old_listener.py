@@ -10,7 +10,7 @@ import time
 import sched
 import asyncio
 
-class listener(commands.Cog):
+class old_listener(commands.Cog):
     def __init__(self, bot, env_variables):
         self.bot = bot
         self.DATABASE_URL = env_variables[0]

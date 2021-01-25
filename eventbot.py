@@ -181,7 +181,7 @@ class listener(commands.Cog):
 class BotClass():
     def __init__(self, bot, env_variables):
         self.bot = bot
-        self.bot.add_cog(sample(bot, env_variables))
+        self.bot.add_cog(listener(bot, env_variables))
         bot.run(os.getenv('TOKEN'))
 
     @bot.event
