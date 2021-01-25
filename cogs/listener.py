@@ -9,12 +9,12 @@ import time
 import sched
 import asyncio
 
-class listener(commands.Cog):
-    def __init__(self, bot):
+class listener(commands.Cog, env_variables):
+    def __init__(self, bot, env_variables):
         self.bot = bot
-        self.DATABASE_URL = os.environ['DATABASE_URL']
-        self.DATABASE_POLL_TABLE = os.environ['DATABASE_POLL_TABLE']
-        self.DATABASE_POLL_MESSAGE_ID_TABLE = os.environ['DATABASE_POLL_MESSAGE_ID_TABLE']
+        self.DATABASE_URL = env_variables[0]
+        self.DATABASE_POLL_TABLE = env_variables[1]
+        self.DATABASE_POLL_MESSAGE_ID_TABLE = env_variables[2]
         self.conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         self.cur = self.conn.cursor()
         self.args = ["FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE", "FALSE"]
@@ -177,5 +177,5 @@ class listener(commands.Cog):
             SQL = "INSERT INTO {table} (poll_message_id, channel_id) VALUES ({user_id}, {username});".format(user_id=user_id, username=username)
         return SQL
 
-def setup(bot):
-    bot.add_cog(listener(bot))
+def setup(bot, env_variables):
+    bot.add_cog(listener(bot, env_variables))
