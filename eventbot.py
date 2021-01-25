@@ -42,7 +42,7 @@ class listener(commands.Cog):
     @commands.command()
     async def poll(self, ctx):
         #check if a poll exists. we should have only one
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", payload.channel_id, "", "", "")
+        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "check_poll_message", "", ctx.channel_id, "", "", "")
         self.cur.execute(SQL)
         fetch = cur.fetchone()
         if fetch is not None:
