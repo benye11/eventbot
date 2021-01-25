@@ -156,12 +156,12 @@ class listener(commands.Cog):
                 column_index = 7
             if column_index != -1:
                 if column_index == 7:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", user.name, 0, 0, self.args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "delete", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", 0, 0, self.args)
                     self.cur.execute(SQL)
                     self.conn.commit() #must commit to database
                     await channel.send("executed delete SQL: " + SQL)
                 else:
-                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", user.name, column, column_index, self.args)
+                    SQL = self.computesql(self.DATABASE_POLL_TABLE, "update", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
                     self.cur.execute(SQL)
                     self.conn.commit() #must commit to database
                     await channel.send("executed update/insert SQL: " + SQL)
