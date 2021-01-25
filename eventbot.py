@@ -202,7 +202,7 @@ class listener(commands.Cog):
                 column_index = "FALSE"
                 column = "unavailable"
             if column_index != -1:
-                SQL = self.computesql(self.DATABASE_POLL_TABLE, "update_false", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
+                SQL = self.computesql(self.DATABASE_POLL_TABLE, "update_false", "'" + str(payload.channel_id) + "'", "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
                 self.cur.execute(SQL)
                 self.conn.commit() #must commit to database
                 #await channel.send("executed delete SQL: " + SQL)
