@@ -226,7 +226,7 @@ class listener(commands.Cog):
         elif action == "check_user":
             SQL = "SELECT CASE WHEN monday | tuesday | wednesday | thursday | friday | saturday | sunday = 0 THEN FALSE ELSE TRUE END as \"deletable\" FROM {table} WHERE user_id = {user_id};".format(table=table, user_id=user_id)
         elif action == "fetch_users":
-            SQL = "SELECT user_id, username FROM {table} WHERE {column} = TRUE AND channel_id={channel_id};".format(table=table, channel_id=channel_id, column=column)
+            SQL = "SELECT user_id, username FROM {table} WHERE {column} = TRUE AND channel_id = {channel_id} AND unavailable = FALSE;".format(table=table, channel_id=channel_id, column=column)
         elif action == "delete_poll_message":
             SQL = "DELETE FROM {table} WHERE poll_message_id = {user_id} AND channel_id = {username};".format(table=table, user_id=user_id, username=username)
         elif action == "check_poll_message":
