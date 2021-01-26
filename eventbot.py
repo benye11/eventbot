@@ -282,7 +282,7 @@ class listener(commands.Cog):
                 fetch = self.cur.fetchall()
                 print(str(type(fetch[0])))
                 print(fetch[0])
-                if fetch[0] == False or fetch[0] == "False" or fetch[0] == "FALSE" or fetch[0] == "f": #now delete user doesn't work
+                if fetch[0][0] == False or fetch[0][0] == "False" or fetch[0][0] == "FALSE" or fetch[0][0] == "f": #now delete user doesn't work
                     SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                     self.cur.execute(SQL)
                     self.conn.commit()
