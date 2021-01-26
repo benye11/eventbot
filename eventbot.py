@@ -150,7 +150,7 @@ class listener(commands.Cog):
         members = ctx.channel.members
         mentions = []
         for member in members:
-            if member.id not in user_ids:
+            if member.id not in user_ids and member.name != "EventBot":
                 user = await self.bot.fetch_user(member.id)
                 mentions.append(user.mention)
         if len(mentions) == 0:
