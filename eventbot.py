@@ -171,7 +171,7 @@ class listener(commands.Cog):
         #sql implementation
         column_index = -1
         column = ""
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, self.args)
+        SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="fetch_poll_message", message_id="'" + str(payload.message_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
