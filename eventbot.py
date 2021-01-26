@@ -145,7 +145,7 @@ class listener(commands.Cog):
         user_ids = [int(x[0]) for x in fetch]
         members = ctx.channel.members
         channel_members = [int(x.id) for x in members if x.name != "EventBot"]
-        filtered = list(set(user_ids + members))
+        filtered = list(set(user_ids + channel_members))
         mentions = []
         for i in filtered:
            user = await self.bot.fetch_user(i)
