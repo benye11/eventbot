@@ -142,17 +142,14 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="fetch_all_users", channel_id= "'" + str(ctx.channel.id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchall()
-        user_ids = [x[0] for x in fetch]
-        #for user_id in user_ids:
-        #    user = await self.bot.fetch_user(user_id)
-        #    responded.append(user.mention)
-
+        user_ids = [int(x[0]) for x in fetch]
         members = ctx.channel.members
+        channel_members = [int(x.id) for x in members if x.name != "EventBot"]
+        filtered = list(set(user_ids + members))
         mentions = []
-        for member in members:
-            if member.id not in user_ids and member.name != "EventBot":
-                user = await self.bot.fetch_user(member.id)
-                mentions.append(user.mention)
+        for i in filtered:
+           user = await self.bot.fetch_user(i)
+           mentions.append(user.mention)
         if len(mentions) == 0:
             await ctx.send("everyone has responded to the poll")
         elif len(mentions) == 1:
