@@ -225,28 +225,37 @@ class listener(commands.Cog):
             pass
         elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             await channel.send("payload grabbed from this channel, emoji removed: " + str(payload.emoji))
-            if str(payload.emoji) == "1️⃣":
+            await channel.send("my emojis: 1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣, 6️⃣, 7️⃣, ❌")
+            #if str(payload.emoji) == "1️⃣":
+            if payload.emoji.name == "one":
                 value = "FALSE"
                 column = "monday"
-            elif str(payload.emoji) == "2️⃣":
+            #elif str(payload.emoji) == "2️⃣":
+            elif payload.emoji.name == "two":
                 value = "FALSE"
                 column = "tuesday"
-            elif str(payload.emoji) == "3️⃣":
+            #elif str(payload.emoji) == "3️⃣":
+            elif payload.emoji.name == "three":
                 value = "FALSE"
                 column = "wednesday"
-            elif str(payload.emoji) == "4️⃣":
+            #elif str(payload.emoji) == "4️⃣":
+            elif payload.emoji.name == "four":
                 value = "FALSE"
                 column = "thursday"
-            elif str(payload.emoji) == "5️⃣":
+            #elif str(payload.emoji) == "5️⃣":
+            elif payload.emoji.name == "five":
                 value = "FALSE"
                 column = "friday"
-            elif str(payload.emoji) == "6️⃣":
+            #elif str(payload.emoji) == "6️⃣":
+            elif payload.emoji.name == "six":
                 value = "FALSE"
                 column = "saturday"
-            elif str(payload.emoji) == "7️⃣":
+            #elif str(payload.emoji) == "7️⃣":
+            elif payload.emoji.name == "seven":
                 value = "FALSE"
                 column = "sunday"
-            elif str(payload.emoji) == "❌":
+            #elif str(payload.emoji) == "❌":
+            elif payload.emoji.name == "x":
                 value = "FALSE"
                 column = "unavailable"
             if column_index != -1:
