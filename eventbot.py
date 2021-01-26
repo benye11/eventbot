@@ -65,7 +65,7 @@ class listener(commands.Cog):
                 msg = await ctx.channel.fetch_message(int(fetch[0]))
                 await ctx.send("poll already exists! please edit that one and don't delete it. It should be a pinned message")
             except Exception as e: #message doesn't exist, then delete from db. this is an error check
-                SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id="'" + str(fetch[0]) + "'", "'" + channel_id=str(fetch[1]) + "'")
+                SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id="'" + str(fetch[0]) + "'", channel_id="'" + str(fetch[1]) + "'")
                 self.cur.execute(SQL)
                 embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
                 embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
