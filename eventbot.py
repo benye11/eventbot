@@ -212,7 +212,7 @@ class listener(commands.Cog):
     async def on_raw_reaction_remove(self, payload):
         user = await self.bot.fetch_user(payload.user_id)
         channel = await self.bot.fetch_channel(payload.channel_id)
-        
+        await payload.channel.send("removed reaction")
         #sql implementation
         column_index = -1
         column = ""
@@ -221,6 +221,7 @@ class listener(commands.Cog):
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if fetch is None:
+            await payload.channel.send("payload was none on reaction remove")
             pass
         elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             if str(payload.emoji) == "1️⃣":
@@ -252,10 +253,10 @@ class listener(commands.Cog):
                 channel_id = "'" + str(payload.channel_id) + "'"
                 username = "'" + str(user.name) + "'"
                 #SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="add_user_selection", channel_id="'" + str(payload.channel_id) + "'", user_id="'" + str(payload.user_id) + "'", username="'" + str(user.name) + "'", column, column_index, self.args)
-                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="remove_user_selection", value=value, user_id=user_id, channel_id=channel_id, username=username, column=column, args=self.args)
+                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="remove_user_selection", value="FALSE", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'", column=column)
                 self.cur.execute(SQL)
                 self.conn.commit()
-                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user_if_no_reactions", user_id=user_id, channel_id=channel_id)
+                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user_if_no_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                 self.cur.execute(SQL)
                 self.conn.commit()
 
