@@ -155,8 +155,8 @@ class listener(commands.Cog):
                 await ctx.send(mentions[0] + " hasn't responded")
             else:
                 output = ""
-                for mention in mentons:
-                    output = output + ", " + mention
+                for mention in mentions:
+                    output = output + " " + mention
                 #index = output.rfind(',')
                 #output = output[:index] + ' and' + output[index+1:]
                 await ctx.send(output + " haven't responded")  
