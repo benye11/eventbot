@@ -269,7 +269,7 @@ class listener(commands.Cog):
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="check_user_for_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                 self.cur.execute(SQL)
                 fetch = self.cur.fetchall()
-                await payload.channel.send("rtn type: " + str(type(fetch[0]))
+                await channel.send("rtn type: " + str(type(fetch[0]))
                 if fetch[0] == "FALSE":
                     SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                     self.cur.execute(SQL)
