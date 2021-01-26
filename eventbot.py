@@ -149,14 +149,17 @@ class listener(commands.Cog):
             for member in members:
                 if member.name != "EventBot":
                     mentions.append(member.mention)
+            if len(mentions) == 0:
+                await ctx.send("everyone has responded to the poll")
             if len(mentions) == 1:
                 await ctx.send(mentions[0] + " hasn't responded")
             else:
-                output = ', '.join(mentions)
-                index = output.rfind(',')
-                output = output[:index] + ' and' + output[index+1:]
-                await ctx.send(output + " haven't responded")
-            
+                output = ""
+                for mention in mentons:
+                    output = output + ", " + mention
+                #index = output.rfind(',')
+                #output = output[:index] + ' and' + output[index+1:]
+                await ctx.send(output + " haven't responded")  
         else:
             #first, scope out all the users who already responded
             user_ids = [str(x[0]) for x in fetch] #a bug happpens here. if this is null, then the checking below doesn't work
