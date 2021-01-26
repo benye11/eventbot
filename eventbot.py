@@ -146,6 +146,7 @@ class listener(commands.Cog):
         members = ctx.channel.members
         channel_members = [int(x.id) for x in members if x.name != "EventBot"]
         filtered = list(set(user_ids + channel_members))
+        await ctx.channel.send(', '.join(filtered))
         mentions = []
         for i in filtered:
            user = await self.bot.fetch_user(i)
