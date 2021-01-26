@@ -207,12 +207,12 @@ class listener(commands.Cog):
                 self.conn.commit() #must commit to database
                 #await channel.send("executed update/insert SQL: " + SQL)
 
-    #NOTE: cache is cleared after every restart, so use raw_on_reaction_add
+    #NOTE: cache is cleared after every restart, so use raw_on_reaction_remove
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload):
         user = await self.bot.fetch_user(payload.user_id)
         channel = await self.bot.fetch_channel(payload.channel_id)
-        await payload.channel.send("removed reaction")
+        await channel.send("removed reaction")
         #sql implementation
         column_index = -1
         column = ""
@@ -221,9 +221,10 @@ class listener(commands.Cog):
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if fetch is None:
-            await payload.channel.send("payload was none on reaction remove")
+            await channel.send("payload was none on reaction remove")
             pass
         elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
+            await channel.send("payload grabbed from this channel")
             if str(payload.emoji) == "1️⃣":
                 value = "FALSE"
                 column = "monday"
@@ -249,6 +250,7 @@ class listener(commands.Cog):
                 value = "FALSE"
                 column = "unavailable"
             if column_index != -1:
+                await channel.send("column: " + column + " was removed")
                 user_id = "'" + str(payload.user_id) + "'"
                 channel_id = "'" + str(payload.channel_id) + "'"
                 username = "'" + str(user.name) + "'"
