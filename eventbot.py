@@ -142,9 +142,9 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="fetch_all_users", channel_id= "'" + str(ctx.channel.id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchall()
-        user_ids = [int(x[0]) for x in fetch]
+        user_ids = [str(x[0]) for x in fetch]
         members = ctx.channel.members
-        channel_members = [int(x.id) for x in members if x.name != "EventBot"]
+        channel_members = [str(x.id) for x in members if x.name != "EventBot"]
         filtered = list(set(user_ids + channel_members))
         await ctx.channel.send(', '.join(filtered))
         mentions = []
