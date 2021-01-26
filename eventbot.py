@@ -151,7 +151,7 @@ class listener(commands.Cog):
         mentions = []
         for member in members:
             if member.id not in user_ids:
-                user = await self.bot.fetch_user(user_id)
+                user = await self.bot.fetch_user(member.id)
                 mentions.append(user.mention)
         if len(mentions) == 0:
             await ctx.send("everyone has responded to the poll")
