@@ -281,7 +281,7 @@ class listener(commands.Cog):
         elif action == "remove_user_selection":
             SQL = "UPDATE {table} SET {column} = {value} WHERE user_id = {user_id} AND channel_id = {channel_id};".format(table=table, value=value, user_id=user_id, column=column, channel_id=channel_id)
         elif action == "delete_user_if_no_reactions":
-            SQL = "DO $$ BEGIN IF ((SELECT COUNT(user_id) FROM {table} WHERE (monday OR tuesday OR wednesday OR thursday OR friday OR saturday OR sunday OR unavailable) = FALSE AND user_id = {user_id} AND channel_id = {channel_id}) > 0) THEN DELETE FROM {table} WHERE user_id = {user_id} AND channel_id = {channel_id} END IF; END; $$".format(table=table, user_id=user_id, channel_id=channel_id)
+            SQL = "DO $$ BEGIN IF ((SELECT COUNT(user_id) FROM {table} WHERE (monday OR tuesday OR wednesday OR thursday OR friday OR saturday OR sunday OR unavailable) = FALSE AND user_id = {user_id} AND channel_id = {channel_id}) > 0) THEN DELETE FROM {table} WHERE user_id = {user_id} AND channel_id = {channel_id} ENDIF; END; $$".format(table=table, user_id=user_id, channel_id=channel_id)
         elif action == "fetch_all_users":
             SQL = "SELECT user_id, username FROM {table} WHERE channel_id = {channel_id};".format(table=table, channel_id=channel_id)
         elif action == "fetch_available_users":
