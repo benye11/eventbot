@@ -212,7 +212,7 @@ class listener(commands.Cog):
     async def on_raw_reaction_remove(self, payload):
         user = await self.bot.fetch_user(payload.user_id)
         channel = await self.bot.fetch_channel(payload.channel_id)
-        await channel.send("removed reaction")
+        #await channel.send("removed reaction")
         #sql implementation
         column_index = -1
         column = ""
@@ -221,7 +221,7 @@ class listener(commands.Cog):
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if fetch is None:
-            await channel.send("payload was none on reaction remove")
+            #await channel.send("payload was none on reaction remove")
             pass
         elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             #await channel.send("payload grabbed from this channel, emoji removed: " + str(payload.emoji))
@@ -258,7 +258,7 @@ class listener(commands.Cog):
                 value = "FALSE"
                 column = "unavailable"
             if column != "":
-                await channel.send("column: " + column + " was removed")
+                #await channel.send("column: " + column + " was removed")
                 user_id = "'" + str(payload.user_id) + "'"
                 channel_id = "'" + str(payload.channel_id) + "'"
                 username = "'" + str(user.name) + "'"
@@ -273,7 +273,7 @@ class listener(commands.Cog):
                     SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                     self.cur.execute(SQL)
                     self.conn.commit()
-                await channel.send(fetch[0])
+                #await channel.send(fetch[0])
                 #if str(fetch[0]) == "FALSE":
                 #    SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                 #    self.cur.execute(SQL)
