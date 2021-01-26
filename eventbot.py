@@ -174,7 +174,9 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="fetch_poll_message", message_id="'" + str(payload.message_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
-        if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
+        if fetch is None:
+            pass
+        elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             if str(payload.emoji) == "1️⃣":
                 column_index = 0
                 column = "monday"
@@ -218,7 +220,9 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="fetch_poll_message", message_id="'" + str(payload.message_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
-        if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
+        if fetch is None:
+            pass
+        elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
             if str(payload.emoji) == "1️⃣":
                 value = "FALSE"
                 column = "monday"
