@@ -210,6 +210,7 @@ class listener(commands.Cog):
                 column = "sunday"
             elif str(payload.emoji) == "❌":
                 column_index = 7
+                column = "unavailable"
             if column_index != -1:
                 value = "TRUE"
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="add_user_selection", value=value, channel_id="'" + str(payload.channel_id) + "'", user_id="'" + str(payload.user_id) + "'", username="'" + str(user.name) + "'", column=column, column_index=column_index, args=self.args)
