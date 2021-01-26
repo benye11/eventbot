@@ -224,7 +224,7 @@ class listener(commands.Cog):
             await channel.send("payload was none on reaction remove")
             pass
         elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
-            await channel.send("payload grabbed from this channel")
+            await channel.send("payload grabbed from this channel, emoji removed: " + str(payload.emoji))
             if str(payload.emoji) == "1️⃣":
                 value = "FALSE"
                 column = "monday"
