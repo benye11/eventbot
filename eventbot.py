@@ -46,12 +46,6 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="check_poll_message_exists", channel_id="'" + str(ctx.channel.id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
-        try:
-            msg = await ctx.channel.fetch_message(int(fetch[0]))
-            if fetch is not None and fetch[1] == str(ctx.channel.id):
-                await ctx.send("poll already exists! please edit that one and don't delete it. It should be a pinned message")
-        except Exception as e: #message doesn't exist, then delete from db
-            SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id=str(fetch[0]), channel_id=str(fetch[1]))
         if fetch is None and fetch[1] == str(ctx.channel.id):
             embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
             embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
@@ -66,6 +60,28 @@ class listener(commands.Cog):
             embed.add_field(name= "Message ID", value=str(message.id), inline=False)
             await message.edit(embed=embed) #add message ID for reference
             await message.pin() #pins message
+        elif fetch is not None and fetch[1] == str(ctx.channel.id):
+            try:
+                msg = await ctx.channel.fetch_message(int(fetch[0]))
+                if fetch is not None and fetch[1] == str(ctx.channel.id):
+                    await ctx.send("poll already exists! please edit that one and don't delete it. It should be a pinned message")
+            except Exception as e: #message doesn't exist, then delete from db. this is an error check
+                SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id=str(fetch[0]), channel_id=str(fetch[1]))
+                self.cur.execute(SQL)
+                embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
+                embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
+                embed.set_thumbnail(url='https://image.flaticon.com/icons/png/512/1458/1458512.png')
+                embed.add_field(name="React with number emojis", value="1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣, 6️⃣, 7️⃣ corresponds to Monday, Tuesday, etc. and ❌ if not available for anything")
+                current_time = datetime.now().strftime('%m/%d/%Y %I:%M %p')
+                embed.set_footer(text=current_time)
+                message = await ctx.send(embed=embed)
+                SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="set_poll_message", message_id="'" + str(message.id) + "'", channel_id="'" + str(message.channel.id) + "'")
+                self.cur.execute(SQL)
+                self.conn.commit() #commit changes to database
+                embed.add_field(name= "Message ID", value=str(message.id), inline=False)
+                await message.edit(embed=embed) #add message ID for reference
+                await message.pin() #pins message
+
     
     @commands.command()
     async def notify(self, ctx, *args):
