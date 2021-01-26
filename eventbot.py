@@ -269,12 +269,11 @@ class listener(commands.Cog):
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="check_user_for_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'") #for some reason, I can't chain here
                 self.cur.execute(SQL)
                 fetch = self.cur.fetchall()
-                await channel.send("rtn type")
-                await channel.send("rtn type: " + str(type(fetch[0]))
-                if str(fetch[0]) == "FALSE":
-                    SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
-                    self.cur.execute(SQL)
-                    self.conn.commit()
+                await channel.send(fetch[0])
+                #if str(fetch[0]) == "FALSE":
+                #    SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
+                #    self.cur.execute(SQL)
+                #    self.conn.commit()
 
     def computesql(self, table="", action="", value="", user_id="", username="", channel_id="", column=-1, column_index=-1, args=[], message_id="", unavailable="FALSE"):
         SQL = ''
