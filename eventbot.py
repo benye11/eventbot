@@ -266,9 +266,14 @@ class listener(commands.Cog):
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="remove_user_selection", value="FALSE", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'", column=column)
                 self.cur.execute(SQL)
                 self.conn.commit()
-                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user_if_no_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
+                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="check_user_for_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                 self.cur.execute(SQL)
-                self.conn.commit()
+                fetch = self.cur.fetchall()
+                await payload.channel.send("rtn type: " + str(type(fetch[0]))
+                if fetch[0] == "FALSE":
+                    SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
+                    self.cur.execute(SQL)
+                    self.conn.commit()
 
     def computesql(self, table="", action="", value="", user_id="", username="", channel_id="", column=-1, column_index=-1, args=[], message_id="", unavailable="FALSE"):
         SQL = ''
@@ -280,8 +285,11 @@ class listener(commands.Cog):
                 SQL = "INSERT INTO {table} (user_id, username, channel_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, unavailable) VALUES ({user_id}, {username}, {channel_id}, {args[0]}, {args[1]}, {args[2]}, {args[3]}, {args[4]}, {args[5]}, {args[6]}, {unavailable}) ON CONFLICT (user_id, channel_id) DO UPDATE SET {column} = {value};".format(table=table, value=value, user_id=user_id, username=username, channel_id=channel_id, column=column, args=dup, unavailable=unavailable)
         elif action == "remove_user_selection":
             SQL = "UPDATE {table} SET {column} = {value} WHERE user_id = {user_id} AND channel_id = {channel_id};".format(table=table, value=value, user_id=user_id, column=column, channel_id=channel_id)
-        elif action == "delete_user_if_no_reactions":
-            SQL = "DO $$ BEGIN IF ((SELECT COUNT(user_id) FROM {table} WHERE (monday OR tuesday OR wednesday OR thursday OR friday OR saturday OR sunday OR unavailable) = FALSE AND user_id = {user_id} AND channel_id = {channel_id}) > 0) THEN DELETE FROM {table} WHERE user_id = {user_id} AND channel_id = {channel_id} ENDIF; END; $$".format(table=table, user_id=user_id, channel_id=channel_id)
+        elif action == "check_user_for_reactions":
+            SQL = "SELECT CASE WHEN (monday OR tuesday OR wednesday OR thursday OR friday OR saturday OR unavailable) = FALSE AND user_id = {user_id} AND channel_id = {channel_id} THEN FALSE ELSE TRUE END AS output FROM {table};".format(table=table, user_id=user_id, channel_id=channel_id) #this works
+        elif action == "delete_user":
+            SQL = "DELETE FROM {table} WHERE user_id = {user_id} AND channel_id = {channel_id};".format(table=table, user_id=user_id, channel_id=channel_id)
+            #SQL = "DO $$ BEGIN IF ((SELECT COUNT(user_id) FROM {table} WHERE (monday OR tuesday OR wednesday OR thursday OR friday OR saturday OR sunday OR unavailable) = FALSE AND user_id = {user_id} AND channel_id = {channel_id}) > 0) THEN DELETE FROM {table} WHERE user_id = {user_id} AND channel_id = {channel_id} ENDIF; END; $$".format(table=table, user_id=user_id, channel_id=channel_id)
         elif action == "fetch_all_users":
             SQL = "SELECT user_id, username FROM {table} WHERE channel_id = {channel_id};".format(table=table, channel_id=channel_id)
         elif action == "fetch_available_users":
