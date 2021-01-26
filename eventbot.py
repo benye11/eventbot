@@ -146,7 +146,7 @@ class listener(commands.Cog):
             await ctx.channel.send("no users responded")
         else:
             #first, scope out all the users who already responded
-            user_ids = [str(x[0]) for x in fetch]
+            user_ids = [str(x[0]) for x in fetch] #a bug happpens here. if this is null, then the checking below doesn't work
 
             #then get all channel members
             members = ctx.channel.members
@@ -220,7 +220,7 @@ class listener(commands.Cog):
 
     #NOTE: cache is cleared after every restart, so use raw_on_reaction_remove
     @commands.Cog.listener()
-    async def on_raw_reaction_remove(self, payload):
+    async def on_raw_reaction_remove(self, payload): #current bugs, if i remove one emoji it deletes the whole row...
         user = await self.bot.fetch_user(payload.user_id)
         channel = await self.bot.fetch_channel(payload.channel_id)
         #await channel.send("removed reaction")
@@ -280,7 +280,7 @@ class listener(commands.Cog):
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="check_user_for_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'") #for some reason, I can't chain here
                 self.cur.execute(SQL)
                 fetch = self.cur.fetchall()
-                if fetch[0]:
+                if fetch[0] == False or fetch[0] == "False" or fetch[0] == "FALSE":
                     SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
                     self.cur.execute(SQL)
                     self.conn.commit()
