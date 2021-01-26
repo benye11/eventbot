@@ -65,7 +65,7 @@ class listener(commands.Cog):
                 msg = await ctx.channel.fetch_message(int(fetch[0]))
                 await ctx.send("poll already exists! please edit that one and don't delete it. It should be a pinned message")
             except Exception as e: #message doesn't exist, then delete from db. this is an error check
-                SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id=str(fetch[0]), channel_id=str(fetch[1]))
+                SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id="'" + str(fetch[0]) + "'", "'" + channel_id=str(fetch[1]) + "'")
                 self.cur.execute(SQL)
                 embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
                 embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
@@ -199,7 +199,8 @@ class listener(commands.Cog):
             elif str(payload.emoji) == "❌":
                 column_index = 7
             if column_index != -1:
-                SQL = self.computesql(self.DATABASE_POLL_TABLE, "add_user_selection", str(payload.channel_id), "'" + str(payload.user_id) + "'", "'" + str(user.name) + "'", column, column_index, self.args)
+                value = "TRUE"
+                SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="add_user_selection", value=value, channel_id="'" + str(payload.channel_id) + "'", user_id="'" + str(payload.user_id) + "'", username="'" + str(user.name) + "'", column=column, column_index=column_index, args=self.args)
                 self.cur.execute(SQL)
                 self.conn.commit() #must commit to database
                 #await channel.send("executed update/insert SQL: " + SQL)
@@ -214,7 +215,7 @@ class listener(commands.Cog):
         column_index = -1
         column = ""
         value = ""
-        SQL = self.computesql(self.DATABASE_POLL_MESSAGE_ID_TABLE, "fetch_poll_message", "", "'" + str(payload.message_id) + "'", "'" + str(payload.channel_id) + "'", 0, 0, self.args)
+        SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="fetch_poll_message", message_id="'" + str(payload.message_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
         if int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
@@ -246,6 +247,7 @@ class listener(commands.Cog):
                 user_id = "'" + str(payload.user_id) + "'"
                 channel_id = "'" + str(payload.channel_id) + "'"
                 username = "'" + str(user.name) + "'"
+                #SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="add_user_selection", channel_id="'" + str(payload.channel_id) + "'", user_id="'" + str(payload.user_id) + "'", username="'" + str(user.name) + "'", column, column_index, self.args)
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="remove_user_selection", value=value, user_id=user_id, channel_id=channel_id, username=username, column=column, args=self.args)
                 self.cur.execute(SQL)
                 self.conn.commit()
