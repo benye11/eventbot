@@ -142,27 +142,30 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="fetch_all_users", channel_id= "'" + str(ctx.channel.id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchall()
-        #first, scope out all the users who already responded
-        user_ids = [str(x[0]) for x in fetch]
-
-        #then get all channel members
-        members = ctx.channel.members
-
-        #then compare each member and check if it's in list. if not, then that means didn't respond yet.
-        mentions = []
-        for member in members:
-            if str(member.id) not in user_ids and member.name != "EventBot":
-                temp = await self.bot.fetch_user(member.id)
-                mentions.append(temp.mention)
-        if len(mentions) == 0:
-            await ctx.send("everyone has responded to the poll")
-        elif len(mentions) == 1:
-            await ctx.send(mentions[0] + " hasn't responded")
+        if len(fetch) == 0:
+            await ctx.channel.send("no users responded")
         else:
-            output = ', '.join(mentions)
-            index = output.rfind(',')
-            output = output[:index] + ' and' + output[index+1:]
-            await ctx.send(output + " haven't responded")
+            #first, scope out all the users who already responded
+            user_ids = [str(x[0]) for x in fetch]
+
+            #then get all channel members
+            members = ctx.channel.members
+
+            #then compare each member and check if it's in list. if not, then that means didn't respond yet.
+            mentions = []
+            for member in members:
+                if str(member.id) not in user_ids and member.name != "EventBot":
+                    temp = await self.bot.fetch_user(member.id)
+                    mentions.append(temp.mention)
+            if len(mentions) == 0:
+                await ctx.send("everyone has responded to the poll")
+            elif len(mentions) == 1:
+                await ctx.send(mentions[0] + " hasn't responded")
+            else:
+                output = ', '.join(mentions)
+                index = output.rfind(',')
+                output = output[:index] + ' and' + output[index+1:]
+                await ctx.send(output + " haven't responded")
 
     @commands.command()
     async def repo(self, ctx):
