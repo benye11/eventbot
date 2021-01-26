@@ -269,6 +269,10 @@ class listener(commands.Cog):
                 SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="check_user_for_reactions", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'") #for some reason, I can't chain here
                 self.cur.execute(SQL)
                 fetch = self.cur.fetchall()
+                if fetch[0]:
+                    SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
+                    self.cur.execute(SQL)
+                    self.conn.commit()
                 await channel.send(fetch[0])
                 #if str(fetch[0]) == "FALSE":
                 #    SQL = self.computesql(table=self.DATABASE_POLL_TABLE, action="delete_user", user_id="'" + str(payload.user_id) + "'", channel_id="'" + str(payload.channel_id) + "'")
