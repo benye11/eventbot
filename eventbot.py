@@ -224,41 +224,40 @@ class listener(commands.Cog):
             await channel.send("payload was none on reaction remove")
             pass
         elif int(fetch[0]) == int(payload.message_id) and int(fetch[1]) == int(payload.channel_id):
-            await channel.send("payload grabbed from this channel, emoji removed: " + str(payload.emoji))
-            await channel.send("my emojis: 1️⃣, 2️⃣, 3️⃣, 4️⃣, 5️⃣, 6️⃣, 7️⃣, ❌")
-            #if str(payload.emoji) == "1️⃣":
-            if payload.emoji.name == "one":
+            #await channel.send("payload grabbed from this channel, emoji removed: " + str(payload.emoji))
+            if str(payload.emoji) == "1️⃣":
+            #if payload.emoji.name == "one":
                 value = "FALSE"
                 column = "monday"
-            #elif str(payload.emoji) == "2️⃣":
-            elif payload.emoji.name == "two":
+            elif str(payload.emoji) == "2️⃣":
+            #elif payload.emoji.name == "two":
                 value = "FALSE"
                 column = "tuesday"
-            #elif str(payload.emoji) == "3️⃣":
-            elif payload.emoji.name == "three":
+            elif str(payload.emoji) == "3️⃣":
+            #elif payload.emoji.name == "three":
                 value = "FALSE"
                 column = "wednesday"
-            #elif str(payload.emoji) == "4️⃣":
-            elif payload.emoji.name == "four":
+            elif str(payload.emoji) == "4️⃣":
+            #elif payload.emoji.name == "four":
                 value = "FALSE"
                 column = "thursday"
-            #elif str(payload.emoji) == "5️⃣":
-            elif payload.emoji.name == "five":
+            elif str(payload.emoji) == "5️⃣":
+            #elif payload.emoji.name == "five":
                 value = "FALSE"
                 column = "friday"
-            #elif str(payload.emoji) == "6️⃣":
-            elif payload.emoji.name == "six":
+            elif str(payload.emoji) == "6️⃣":
+            #elif payload.emoji.name == "six":
                 value = "FALSE"
                 column = "saturday"
-            #elif str(payload.emoji) == "7️⃣":
-            elif payload.emoji.name == "seven":
+            elif str(payload.emoji) == "7️⃣":
+            #elif payload.emoji.name == "seven":
                 value = "FALSE"
                 column = "sunday"
-            #elif str(payload.emoji) == "❌":
-            elif payload.emoji.name == "x":
+            elif str(payload.emoji) == "❌":
+            #elif payload.emoji.name == "x":
                 value = "FALSE"
                 column = "unavailable"
-            if column_index != -1:
+            if column != "":
                 await channel.send("column: " + column + " was removed")
                 user_id = "'" + str(payload.user_id) + "'"
                 channel_id = "'" + str(payload.channel_id) + "'"
