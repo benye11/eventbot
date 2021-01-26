@@ -143,10 +143,16 @@ class listener(commands.Cog):
         self.cur.execute(SQL)
         fetch = self.cur.fetchall()
         user_ids = [x[0] for x in fetch]
+        #for user_id in user_ids:
+        #    user = await self.bot.fetch_user(user_id)
+        #    responded.append(user.mention)
+
+        members = ctx.channel.members
         mentions = []
-        for user_id in user_ids:
-            user = await self.bot.fetch_user(user_id)
-            mentions.append(user.mention)
+        for member in members:
+            if member.id not in user_ids:
+                user = await self.bot.fetch_user(user_id)
+                mentions.append(user.mention)
         if len(mentions) == 0:
             await ctx.send("everyone has responded to the poll")
         elif len(mentions) == 1:
