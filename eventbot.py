@@ -35,7 +35,7 @@ class listener(commands.Cog):
         embed.add_field(name=".schedule event_name event_day", value="schedules event notification at event_day\nevent_day format (year is assumed to be current year): [Format]: Month/Day Hour:Minute AM/PM\nexample: 01/23 4:30 PM", inline=False) #in the future, should be able to enter this into database. for now, just internal schedule
         #embed.add_field(name=".availability event_id", value="output people available for this event", inline=False) #implement later
         embed.add_field(name=".availability event_day", value="output people available for this time\nday format: Month/Day Example: 01/23", inline=False)
-        embed.add_field(name=".rr", value="output people haven't reacted to the poll. Alternate names: .requestresponse or .request_response")
+        embed.add_field(name=".rr", value="output people haven't reacted to the poll. Alternate names: .requestresponse or .request_response", inline=False)
         embed.add_field(name=".repo", value="output link to github repo. helpful links and resources are displayed in the README.md")
         embed.set_footer(text=datetime.now().strftime('%m/%d/%Y %I:%M %p'))
         await ctx.send(embed=embed)
