@@ -46,7 +46,7 @@ class listener(commands.Cog):
         SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="check_poll_message_exists", channel_id="'" + str(ctx.channel.id) + "'")
         self.cur.execute(SQL)
         fetch = self.cur.fetchone()
-        if fetch is None and fetch[1] == str(ctx.channel.id):
+        if fetch is None:
             embed = discord.Embed(color=0x32A852, title='Poll Weekly Availability anytime between 6-10PM', description="If you are available at least 30 mins between 6-10PM, please react")
             embed.set_author(name='Event Bot', icon_url='https://i.imgur.com/qn182DB.jpg')
             embed.set_thumbnail(url='https://image.flaticon.com/icons/png/512/1458/1458512.png')
@@ -63,8 +63,7 @@ class listener(commands.Cog):
         elif fetch is not None and fetch[1] == str(ctx.channel.id):
             try:
                 msg = await ctx.channel.fetch_message(int(fetch[0]))
-                if fetch is not None and fetch[1] == str(ctx.channel.id):
-                    await ctx.send("poll already exists! please edit that one and don't delete it. It should be a pinned message")
+                await ctx.send("poll already exists! please edit that one and don't delete it. It should be a pinned message")
             except Exception as e: #message doesn't exist, then delete from db. this is an error check
                 SQL = self.computesql(table=self.DATABASE_POLL_MESSAGE_ID_TABLE, action="delete_poll_message", message_id=str(fetch[0]), channel_id=str(fetch[1]))
                 self.cur.execute(SQL)
